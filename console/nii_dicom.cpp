@@ -3984,9 +3984,11 @@ struct TDICOMdata readDICOMv(char * fname, int isVerbose, int compressFlag, stru
 //#define  kSpecificCharacterSet 0x0008+(0x0005 << 16 ) //someday we should handle foreign characters...
 #define  kImageTypeTag 0x0008+(0x0008 << 16 )
 #define  kStudyDate 0x0008+(0x0020 << 16 )
+#define  kSeriesDate 0x0008+(0x0021 << 16 )
 #define  kAcquisitionDate 0x0008+(0x0022 << 16 )
 #define  kAcquisitionDateTime 0x0008+(0x002A << 16 )
 #define  kStudyTime 0x0008+(0x0030 << 16 )
+#define  kSeriesTime 0x0008+(0x0031 << 16 )
 #define  kAcquisitionTime 0x0008+(0x0032 << 16 ) //TM
 //#define  kContentTime 0x0008+(0x0033 << 16 ) //TM
 #define  kModality 0x0008+(0x0060 << 16 ) //CS
@@ -3996,6 +3998,7 @@ struct TDICOMdata readDICOMv(char * fname, int isVerbose, int compressFlag, stru
 #define  kReferringPhysicianName 0x0008+(0x0090 << 16 )
 #define  kStationName 0x0008+(0x1010 << 16 )
 #define  kSeriesDescription 0x0008+(0x103E << 16 ) // '0008' '103E' 'LO' 'SeriesDescription'
+#define  kStudyDescription 0x0008+(0x1030 << 16 ) // '0008' '1030' 'LO' 'StudyDescription'
 #define  kInstitutionalDepartmentName  0x0008+(0x1040 << 16 )
 #define  kManufacturersModelName 0x0008+(0x1090 << 16 )
 #define  kDerivationDescription 0x0008+(0x2111 << 16 )
@@ -4082,6 +4085,7 @@ const uint32_t kEffectiveTE  = 0x0018+ (0x9082 << 16);
 #define  kImageNum 0x0020+(0x0013 << 16 )
 #define  kStudyInstanceUID 0x0020+(0x000D << 16 )
 #define  kSeriesInstanceUID 0x0020+(0x000E << 16 )
+#define  kSOPInstanceUID 0x0008+(0x0018 << 16 )
 #define  kImagePositionPatient 0x0020+(0x0032 << 16 )   // Actually !
 #define  kOrientationACR 0x0020+(0x0035 << 16 )
 //#define  kTemporalPositionIdentifier 0x0020+(0x0100 << 16 ) //IS
@@ -4734,6 +4738,9 @@ double TE = 0.0; //most recent echo time recorded
             case kStudyDate:
                 dcmStr (lLength, &buffer[lPos], d.studyDate);
                 break;
+            case kSeriesDate:
+                dcmStr (lLength, &buffer[lPos], d.seriesDate);
+                break;
             case kModality:
                 if (lLength < 2) break;
                 if ((buffer[lPos]=='C') && (toupper(buffer[lPos+1]) == 'R'))
@@ -4800,6 +4807,8 @@ double TE = 0.0; //most recent echo time recorded
             case kStudyTime :
                 dcmStr (lLength, &buffer[lPos], d.studyTime);
                 break;
+            case kSeriesTime :
+                dcmStr (lLength, &buffer[lPos], d.seriesTime);
             case kPatientName :
                 dcmStr (lLength, &buffer[lPos], d.patientName);
                 break;
@@ -4833,6 +4842,9 @@ double TE = 0.0; //most recent echo time recorded
                 break;
             case kSeriesDescription: {
                 dcmStr (lLength, &buffer[lPos], d.seriesDescription);
+                break; }
+            case kStudyDescription: {
+                dcmStr (lLength, &buffer[lPos], d.studyDescription);
                 break; }
             case kInstitutionalDepartmentName:
             	dcmStr (lLength, &buffer[lPos], d.institutionalDepartmentName);
@@ -4960,6 +4972,9 @@ double TE = 0.0; //most recent echo time recorded
             	dcmStr (lLength, &buffer[lPos], d.seriesInstanceUID);
             	//printMessage(">>%s\n", d.seriesInstanceUID);
             	d.seriesUidCrc = mz_crc32X((unsigned char*) &d.seriesInstanceUID, strlen(d.seriesInstanceUID));
+                break;
+            case kSOPInstanceUID : // 0008, 0018
+                dcmStr (lLength, &buffer[lPos], d.sopInstanceUID);
                 break;
             case kImagePositionPatient : {
                 if (is2005140FSQ) {

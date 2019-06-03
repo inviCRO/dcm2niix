@@ -966,10 +966,11 @@ tse3d: T2*/
 	if (!opts.isAnonymizeBIDS) {
 		json_Str(fp, "\t\"SeriesInstanceUID\": \"%s\",\n", d.seriesInstanceUID);
 		json_Str(fp, "\t\"StudyInstanceUID\": \"%s\",\n", d.studyInstanceUID);
+		json_Str(fp, "\t\"SOPInstanceUID\": \"%s\",\n", d.sopInstanceUID);
 		json_Str(fp, "\t\"ReferringPhysicianName\": \"%s\",\n", d.referringPhysicianName);
 		json_Str(fp, "\t\"StudyID\": \"%s\",\n", d.studyID);
 		//Next lines directly reveal patient identity
-		json_Str(fp, "\t\"PatientName\": \"%s\",\n", d.patientName);
+		json_Str(fp, "\t\"PatientsName\": \"%s\",\n", d.patientName);
 		json_Str(fp, "\t\"PatientID\": \"%s\",\n", d.patientID);
 		json_Str(fp, "\t\"AccessionNumber\": \"%s\",\n", d.accessionNumber);
 		if (strlen(d.patientBirthDate) == 8) { //DICOM DA YYYYMMDD -> ISO 8601 "YYYY-MM-DD"
@@ -981,6 +982,11 @@ tse3d: T2*/
 		}
 		if (d.patientSex != '?') fprintf(fp, "\t\"PatientSex\": \"%c\",\n",  d.patientSex);
 		json_Float(fp, "\t\"PatientWeight\": %g,\n", d.patientWeight);
+        json_Str(fp,"\t\"StudyDescription\": \"%s\",\n",d.studyDescription);
+        json_Str(fp,"\t\"StudyDate\": \"%s\",\n",d.studyDate);
+        json_Str(fp,"\t\"StudyTime\": \"%s\",\n",d.studyTime);
+        json_Str(fp,"\t\"SeriesDate\": \"%s\",\n",d.seriesDate);
+        json_Str(fp,"\t\"SeriesTime\": \"%s\",\n",d.seriesTime);
 		//d.patientBirthDate //convert from DICOM  YYYYMMDD to JSON
 		//d.patientAge //4-digit Age String: nnnD, nnnW, nnnM, nnnY;
 	}
