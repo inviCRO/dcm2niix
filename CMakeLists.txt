@@ -6,4 +6,6 @@ endif()
 
 project(dcm2niix)
 
+set(CMAKE_BUILD_TYPE,"Release")
+
 include(${CMAKE_SOURCE_DIR}/SuperBuild/SuperBuild.cmake)

@@ -3986,11 +3986,12 @@ struct TDICOMdata readDICOMv(char * fname, int isVerbose, int compressFlag, stru
 #define  kStudyDate 0x0008+(0x0020 << 16 )
 #define  kSeriesDate 0x0008+(0x0021 << 16 )
 #define  kAcquisitionDate 0x0008+(0x0022 << 16 )
+#define  kContentDate 0x0008+(0x0023 << 16 )
 #define  kAcquisitionDateTime 0x0008+(0x002A << 16 )
 #define  kStudyTime 0x0008+(0x0030 << 16 )
 #define  kSeriesTime 0x0008+(0x0031 << 16 )
 #define  kAcquisitionTime 0x0008+(0x0032 << 16 ) //TM
-//#define  kContentTime 0x0008+(0x0033 << 16 ) //TM
+#define  kContentTime 0x0008+(0x0033 << 16 ) //TM
 #define  kModality 0x0008+(0x0060 << 16 ) //CS
 #define  kManufacturer 0x0008+(0x0070 << 16 )
 #define  kInstitutionName 0x0008+(0x0080 << 16 )
@@ -4729,6 +4730,7 @@ double TE = 0.0; //most recent echo time recorded
             	char acquisitionDateTxt[kDICOMStr];
                 dcmStr (lLength, &buffer[lPos], acquisitionDateTxt);
                 d.acquisitionDate = atof(acquisitionDateTxt);
+                dcmStr (lLength, &buffer[lPos], d.contentDate);
             	break;
             case kAcquisitionDateTime:
             	//char acquisitionDateTimeTxt[kDICOMStr];
@@ -4740,6 +4742,9 @@ double TE = 0.0; //most recent echo time recorded
                 break;
             case kSeriesDate:
                 dcmStr (lLength, &buffer[lPos], d.seriesDate);
+                break;
+            case kContentDate:
+                dcmStr (lLength, &buffer[lPos], d.contentDate);
                 break;
             case kModality:
                 if (lLength < 2) break;
@@ -4798,6 +4803,7 @@ double TE = 0.0; //most recent echo time recorded
                 //UIH slice timing- do not use for Siemens as Siemens de-identification can corrupt this field https://github.com/rordenlab/dcm2niix/issues/236
                 d.CSA.sliceTiming[acquisitionTimesGE_UIH] = d.acquisitionTime;
                 acquisitionTimesGE_UIH ++;
+                dcmStr (lLength, &buffer[lPos], d.contentTime);
                 break;
             //case kContentTime :
             //    char contentTimeTxt[kDICOMStr];
@@ -4809,6 +4815,10 @@ double TE = 0.0; //most recent echo time recorded
                 break;
             case kSeriesTime :
                 dcmStr (lLength, &buffer[lPos], d.seriesTime);
+                break;
+            case kContentTime :
+                dcmStr (lLength, &buffer[lPos], d.contentTime);
+                break;
             case kPatientName :
                 dcmStr (lLength, &buffer[lPos], d.patientName);
                 break;
@@ -4840,12 +4850,12 @@ double TE = 0.0; //most recent echo time recorded
             case kStationName :
                 dcmStr (lLength, &buffer[lPos], d.stationName);
                 break;
-            case kSeriesDescription: {
+            case kSeriesDescription:
                 dcmStr (lLength, &buffer[lPos], d.seriesDescription);
-                break; }
-            case kStudyDescription: {
+                break; 
+            case kStudyDescription: 
                 dcmStr (lLength, &buffer[lPos], d.studyDescription);
-                break; }
+                break; 
             case kInstitutionalDepartmentName:
             	dcmStr (lLength, &buffer[lPos], d.institutionalDepartmentName);
             	break;
@@ -5072,9 +5082,11 @@ double TE = 0.0; //most recent echo time recorded
                 break;
             case kDim2:
                 d.xyzDim[2] = dcmInt(lLength,&buffer[lPos],d.isLittleEndian);
+                d.rows = dcmInt(lLength,&buffer[lPos],d.isLittleEndian);
                 break;
             case kDim1:
                 d.xyzDim[1] = dcmInt(lLength,&buffer[lPos],d.isLittleEndian);
+                d.columns = dcmInt(lLength,&buffer[lPos],d.isLittleEndian);
                 break;
             //order is Row,Column e.g. YX
             case kXYSpacing:{

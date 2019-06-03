@@ -987,9 +987,17 @@ tse3d: T2*/
         json_Str(fp,"\t\"StudyTime\": \"%s\",\n",d.studyTime);
         json_Str(fp,"\t\"SeriesDate\": \"%s\",\n",d.seriesDate);
         json_Str(fp,"\t\"SeriesTime\": \"%s\",\n",d.seriesTime);
+        json_Str(fp,"\t\"ContentDate\": \"%s\",\n",d.contentDate);
+        json_Str(fp,"\t\"ContentTime\": \"%s\",\n",d.contentTime);
+
 		//d.patientBirthDate //convert from DICOM  YYYYMMDD to JSON
 		//d.patientAge //4-digit Age String: nnnD, nnnW, nnnM, nnnY;
 	}
+    
+	fprintf(fp, "\t\"InstanceNumber\": \"%d\",\n", d.imageNum);
+	fprintf(fp, "\t\"Rows\": %d,\n", d.rows);
+	fprintf(fp, "\t\"Columns\": %d,\n", d.columns);
+	fprintf(fp, "\t\"InstanceNumber\": \"%d\",\n", d.imageNum);
 	json_Str(fp, "\t\"BodyPartExamined\": \"%s\",\n", d.bodyPartExamined);
 	json_Str(fp, "\t\"PatientPosition\": \"%s\",\n", d.patientOrient);  // 0018,5100 = PatientPosition in DICOM
 	json_Str(fp, "\t\"ProcedureStepDescription\": \"%s\",\n", d.procedureStepDescription);
@@ -5689,11 +5697,11 @@ void setDefaultOpts (struct TDCMopts *opts, const char * argv[]) { //either "set
     opts->isCreateBIDS =  true;
     opts->isOnlyBIDS = false;
     opts->isSortDTIbyBVal = false;
-    #ifdef myNoAnonymizeBIDS
+    //#ifdef myNoAnonymizeBIDS
     opts->isAnonymizeBIDS = false;
-    #else
-    opts->isAnonymizeBIDS = true;
-    #endif
+    //#else
+    //opts->isAnonymizeBIDS = true;
+    //#endif
     opts->isCreateText = false;
 #ifdef myDebug
         opts->isVerbose =   true;
